@@ -70,7 +70,12 @@ function date() {
 
 function amoozeshyar_element_to_csv(table_parent,include_head=true) {
   console.log(table_parent)
-  let table_head = table_parent.querySelector("thead")
+  let table_head = table_parent.querySelector("thead");
+  let head_items = [...table_head.querySelector("tr").querySelectorAll("th")];
+  let slice_index = 0;
+  while (head_items[slice_index].querySelector("img")) {
+    slice_index+=1;
+  }
   let table = table_parent.querySelector("tbody")
   let rows = (include_head 
     ? [...table_head.querySelectorAll("tr"),...table.querySelectorAll("tr")]
@@ -78,7 +83,7 @@ function amoozeshyar_element_to_csv(table_parent,include_head=true) {
   let output_str = ""
   rows.forEach(row => {
     let row_str = ""
-    let cells = [...row.querySelectorAll("th"),...row.querySelectorAll("td")].slice(3)
+    let cells = [...row.querySelectorAll("th"),...row.querySelectorAll("td")].slice(slice_index)
     cells.forEach(cell => {
       row_str += (cell.querySelector("font")||cell).innerText + ','
     })

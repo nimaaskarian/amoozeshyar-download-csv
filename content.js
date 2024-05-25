@@ -1,4 +1,4 @@
-let clickedElement = null
+let clickedElement = null;
 document.addEventListener("contextmenu", function(event){
   console.log(event.target)
   clickedElement = event.target;
@@ -9,11 +9,42 @@ document.addEventListener("contextmenu", function(event){
 }, true);
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-  if (message.action === 'downloadCsv') {
-    download("amoozeshyar-"+date()+".csv",amoozeshyar_element_to_csv(clickedElement), 'text/csv')
-    sendResponse({ message: "Downloaded some .csv" });
+  switch (message.action) {
+    case 'downloadCsv':
+      download_current_csv(sendResponse)
+    break;
+    case 'appendCsv':
+      append_to_csv_data(sendResponse, message.csvData)
+    break;
+    case 'downloadAppendedCsv':
+      download_appended_csv(sendResponse, message.csvData)
+    break;
   }
 });
+
+function append_to_csv_data(sendResponse, csvData) {
+  let tmp_data = null;
+  if (csvData) {
+    tmp_data = amoozeshyar_element_to_csv(clickedElement, false)
+  } else {
+    tmp_data = amoozeshyar_element_to_csv(clickedElement)
+  }
+  sendResponse({ message: "Appended some .csv", csvData: tmp_data});
+}
+
+function download_appended_csv(sendResponse, csvData) {
+  if (csvData) {
+    download("amoozeshyar-"+date()+".csv",csvData, 'text/csv')
+    sendResponse({ message: "Download appended .csv and cleared the data", action: "clear_data"});
+  } else {
+    sendResponse({ message: "No .csv data found" });
+  }
+}
+
+function download_current_csv(sendResponse) {
+  download("amoozeshyar-"+date()+".csv",amoozeshyar_element_to_csv(clickedElement), 'text/csv')
+  sendResponse({ message: "Downloaded some .csv" });
+}
 
 function download(filename, text, type='text/plain') {
   var element = document.createElement('a');
@@ -37,11 +68,13 @@ function date() {
   return yyyy+'-'+mm + '-' + dd + '-' +time;
 }
 
-function amoozeshyar_element_to_csv(table_parent) {
+function amoozeshyar_element_to_csv(table_parent,include_head=true) {
   console.log(table_parent)
   let table_head = table_parent.querySelector("thead")
   let table = table_parent.querySelector("tbody")
-  let rows = [...table_head.querySelectorAll("tr"),...table.querySelectorAll("tr")]
+  let rows = (include_head 
+    ? [...table_head.querySelectorAll("tr"),...table.querySelectorAll("tr")]
+    : [...table.querySelectorAll("tr")]);
   let output_str = ""
   rows.forEach(row => {
     let row_str = ""

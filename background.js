@@ -15,6 +15,7 @@ chrome.runtime.onInstalled.addListener(function() {
     title: "Download appended .csv",
     contexts: ["all"]
   });
+  updateAppendedCsvVisibility();
 });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
@@ -30,6 +31,11 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
     if (response.action === "clear_data") {
       csvData = null;
     }
+    updateAppendedCsvVisibility();
     console.log(response)
   });  
 });
+
+function updateAppendedCsvVisibility() {
+  chrome.contextMenus.update("downloadAppendedCsv", { visible: !!csvData });
+}

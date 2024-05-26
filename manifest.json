@@ -11,6 +11,15 @@
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"]
+    }],
+  "commands": {
+    "reappend": {
+      "suggested_key": "Ctrl+Shift+S",
+      "description": "Re-append the same element as before"
+    },
+    "downloadAppendedCsv": {
+      "suggested_key": "Ctrl+Shift+D",
+      "description": "Download appended csv data"
     }
-  ]
+  }
 }

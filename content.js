@@ -14,27 +14,30 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       download_current_csv(sendResponse)
     break;
     case 'appendCsv':
-      append_to_csv_data(sendResponse, message.csvData)
+      append_to_csv_data(sendResponse, message.csv_data)
+    break;
+    case 'appendCsvElementId':
+      append_to_csv_data(sendResponse, message.csv_data, document.getElementById(message.element_id))
     break;
     case 'downloadAppendedCsv':
-      download_appended_csv(sendResponse, message.csvData)
+      download_appended_csv(sendResponse, message.csv_data)
     break;
   }
 });
 
-function append_to_csv_data(sendResponse, csvData) {
+function append_to_csv_data(sendResponse, csv_data, element=clickedElement) {
   let tmp_data = null;
-  if (csvData) {
-    tmp_data = amoozeshyar_element_to_csv(clickedElement, false)
+  if (csv_data) {
+    tmp_data = amoozeshyar_element_to_csv(element, false)
   } else {
-    tmp_data = amoozeshyar_element_to_csv(clickedElement)
+    tmp_data = amoozeshyar_element_to_csv(element)
   }
-  sendResponse({ message: "Appended some .csv", csvData: tmp_data});
+  sendResponse({ message: "Appended some .csv", csv_data: tmp_data, element_id: element.id});
 }
 
-function download_appended_csv(sendResponse, csvData) {
-  if (csvData) {
-    download("amoozeshyar-"+date()+".csv",csvData, 'text/csv')
+function download_appended_csv(sendResponse, csv_data) {
+  if (csv_data) {
+    download("amoozeshyar-"+date()+".csv",csv_data, 'text/csv')
     sendResponse({ message: "Download appended .csv and cleared the data", action: "clear_data"});
   } else {
     sendResponse({ message: "No .csv data found" });

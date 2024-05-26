@@ -24,13 +24,13 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
   chrome.tabs.sendMessage(tab.id, {action: info.menuItemId, csv_data}, handle_response);  
 });
 
-chrome.commands.onCommand.addListener((command,tab) => {
-  switch (command) {
-    case 'reappend':
-      chrome.tabs.sendMessage(tab.id, {action: "appendCsvElementId", csv_data, element_id}, handle_response)
+chrome.commands.onCommand.addListener((action,tab) => {
+  switch (action) {
+    case 'appendCsvElementId':
+      chrome.tabs.sendMessage(tab.id, {action, csv_data, element_id}, handle_response)
     break;
     case 'downloadAppendedCsv':
-      chrome.tabs.sendMessage(tab.id, {action: command, csv_data}, handle_response)
+      chrome.tabs.sendMessage(tab.id, {action, csv_data}, handle_response)
     break;
   }
 });

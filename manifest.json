@@ -13,7 +13,7 @@
       "js": ["content.js"]
     }],
   "commands": {
-    "reappend": {
+    "appendCsvElementId": {
       "suggested_key": "Ctrl+Shift+S",
       "description": "Re-append the same element as before"
     },
